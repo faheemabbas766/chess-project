@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:fimi_tiger/logic/chess_game.dart';
 import 'package:fimi_tiger/logic/move_calculation/move_classes/move_meta.dart';
@@ -7,15 +6,11 @@ import 'package:fimi_tiger/views/components/main_menu_view/game_options/side_pic
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app_themes.dart';
-const TIMER_ACCURACY_MS = 100;
 const PIECE_THEMES = ['Classic'];
-
 class AppModel extends ChangeNotifier {
-  int playerCount = 1;
-  int aiDifficulty = 1;
+  int playerCount = 2;
   Player selectedSide = Player.player1;
   Player playerSide = Player.player1;
-  int timeLimit = 0;
   String pieceTheme = 'Classic';
   String themeName = 'Green';
   bool showMoveHistory = true;
@@ -23,17 +18,13 @@ class AppModel extends ChangeNotifier {
   bool soundEnabled = true;
   bool showHints = true;
   bool flip = true;
-
   ChessGame game;
-  Timer timer;
   bool gameOver = false;
   bool stalemate = false;
   bool promotionRequested = false;
   bool moveListUpdated = false;
   Player turn = Player.player1;
   List<MoveMeta> moveMetaList = [];
-  Duration player1TimeLeft = Duration.zero;
-  Duration player2TimeLeft = Duration.zero;
 
   List<String> get pieceThemes {
     var pieceThemes = List<String>.from(PIECE_THEMES);
@@ -82,41 +73,21 @@ class AppModel extends ChangeNotifier {
   }
 
   void newGame(BuildContext context, {bool notify = true}) {
-    if (game != null) {
-      game.cancelAIMove();
-    }
-    if (timer != null) {
-      timer.cancel();
-    }
     gameOver = false;
     stalemate = false;
     turn = Player.player1;
     moveMetaList = [];
-    player1TimeLeft = Duration(minutes: timeLimit);
-    player2TimeLeft = Duration(minutes: timeLimit);
-    if (selectedSide == Player.random) {
+    if (selectedSide == Player.player1) {
       playerSide =
           Random.secure().nextInt(2) == 0 ? Player.player1 : Player.player2;
     }
     game = ChessGame(this, context);
-    timer = Timer.periodic(Duration(milliseconds: TIMER_ACCURACY_MS), (timer) {
-      turn == Player.player1
-          ? decrementPlayer1Timer()
-          : decrementPlayer2Timer();
-      if ((player1TimeLeft == Duration.zero ||
-              player2TimeLeft == Duration.zero) &&
-          timeLimit != 0) {
-        endGame();
-      }
-    });
     if (notify) {
       notifyListeners();
     }
   }
 
   void exitChessView() {
-    game.cancelAIMove();
-    timer.cancel();
     notifyListeners();
   }
 
@@ -156,41 +127,12 @@ class AppModel extends ChangeNotifier {
     playerCount = count;
     notifyListeners();
   }
-
-  void setAIDifficulty(int difficulty) {
-    aiDifficulty = difficulty;
-    notifyListeners();
-  }
-
   void setPlayerSide(Player side) {
     selectedSide = side;
-    if (side != Player.random) {
+    if (side != Player.player1) {
       playerSide = side;
     }
     notifyListeners();
-  }
-
-  void setTimeLimit(int duration) {
-    timeLimit = duration;
-    player1TimeLeft = Duration(minutes: timeLimit);
-    player2TimeLeft = Duration(minutes: timeLimit);
-    notifyListeners();
-  }
-
-  void decrementPlayer1Timer() {
-    if (player1TimeLeft.inMilliseconds > 0 && !gameOver) {
-      player1TimeLeft = Duration(
-          milliseconds: player1TimeLeft.inMilliseconds - TIMER_ACCURACY_MS);
-      notifyListeners();
-    }
-  }
-
-  void decrementPlayer2Timer() {
-    if (player2TimeLeft.inMilliseconds > 0 && !gameOver) {
-      player2TimeLeft = Duration(
-          milliseconds: player2TimeLeft.inMilliseconds - TIMER_ACCURACY_MS);
-      notifyListeners();
-    }
   }
 
   void setTheme(int index) async {
@@ -234,14 +176,6 @@ class AppModel extends ChangeNotifier {
     prefs.setBool('flip', flip);
     notifyListeners();
   }
-
-  void setAllowUndoRedo(bool allow) async {
-    final prefs = await SharedPreferences.getInstance();
-    this.allowUndoRedo = allow;
-    prefs.setBool('allowUndoRedo', allow);
-    notifyListeners();
-  }
-
   void loadSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     themeName = prefs.getString('themeName') ?? 'Green';
@@ -253,7 +187,6 @@ class AppModel extends ChangeNotifier {
     allowUndoRedo = prefs.getBool('allowUndoRedo') ?? true;
     notifyListeners();
   }
-
   void update() {
     notifyListeners();
   }

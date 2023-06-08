@@ -46,8 +46,6 @@ class _ChessViewState extends State<ChessView> {
                   GameInfoAndControls(appModel),
                   Spacer(),
                   ChessBoardWidget(appModel),
-
-                  SizedBox(height: 20),
                 ],
               ),
             ),

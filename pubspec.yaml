@@ -23,6 +23,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.5
+
   file: ^6.1.2
   flame: ^1.0.0-releasecandidate.11
   url_launcher: ^6.0.2
@@ -94,10 +95,4 @@ flutter:
   assets:
     - assets/images/
     - assets/images/pieces/classic/
-    - assets/images/pieces/letters/
-    - assets/images/pieces/angular/
-    - assets/images/pieces/8-bit/
-    - assets/images/pieces/videochess/
-    - assets/images/pieces/lewischessmen/
-    - assets/images/pieces/mexicocity/
     - assets/audio/piece_moved.mp3

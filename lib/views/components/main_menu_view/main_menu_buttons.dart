@@ -27,6 +27,21 @@ class MainMenuButtons extends StatelessWidget {
               );
             },
           ),
+          Text("Want to Play Online?  Click Here..."),
+          RoundedButton(
+            'Play Online',
+            onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) {
+                    appModel.newGame(context, notify: false);
+                    return ChessView(appModel);
+                  },
+                ),
+              );
+            },
+          ),
         ],
       ),
     );

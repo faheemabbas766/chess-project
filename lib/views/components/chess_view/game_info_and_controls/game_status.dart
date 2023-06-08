@@ -22,18 +22,10 @@ class GameStatus extends StatelessWidget {
 
   String _getStatus(AppModel appModel) {
     if (!appModel.gameOver) {
-      if (appModel.playerCount == 1) {
-        if (appModel.isAIsTurn) {
-          return 'AI [Level ${appModel.aiDifficulty}] is thinking ';
-        } else {
-          return 'Your turn';
-        }
+      if (appModel.turn == Player.player1) {
+        return 'White\'s turn';
       } else {
-        if (appModel.turn == Player.player1) {
-          return 'White\'s turn';
-        } else {
-          return 'Black\'s turn';
-        }
+        return 'Brown\'s turn';
       }
     } else {
       if (appModel.stalemate) {

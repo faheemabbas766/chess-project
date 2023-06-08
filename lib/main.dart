@@ -1,5 +1,5 @@
+import 'dart:io';
 import 'package:fimi_tiger/model/app_model.dart';
-import 'package:fimi_tiger/splash_screen.dart';
 import 'package:fimi_tiger/views/main_menu_view.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +7,20 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'logic/shared_functions.dart';
 
+void startServer() async {
+  final server = await ServerSocket.bind(InternetAddress.anyIPv4, 9000);
+  print('Server started on port 9000');
+
+  server.listen((clientSocket) {
+    print('Client connected: ${clientSocket.remoteAddress.address}:${clientSocket.remotePort}');
+
+    // Handle client logic here
+    // You'll need to implement the specific logic for your chess game
+  });
+}
+
 void main() {
+  startServer();
   runApp(
     ChangeNotifierProvider(
       create: (context) => AppModel(),
@@ -43,8 +56,7 @@ class FiMiTigerApp extends StatelessWidget {
           pickerTextStyle: TextStyle(fontFamily: 'Jura'),
         ),
       ),
-      home: SplashScreen(),
-    //  home: MainMenuView(),
+      home: MainMenuView(),
     );
   }
 }

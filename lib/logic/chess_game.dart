@@ -1,6 +1,5 @@
 import 'package:async/async.dart';
 import 'package:fimi_tiger/logic/chess_piece_sprite.dart';
-import 'package:fimi_tiger/logic/move_calculation/ai_move_calculation.dart';
 import 'package:fimi_tiger/logic/move_calculation/move_calculation.dart';
 import 'package:fimi_tiger/logic/move_calculation/move_classes/move_meta.dart';
 import 'package:fimi_tiger/logic/shared_functions.dart';
@@ -9,8 +8,6 @@ import 'package:fimi_tiger/views/components/main_menu_view/game_options/side_pic
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-
 import 'chess_board.dart';
 import 'chess_piece.dart';
 import 'move_calculation/move_classes/move.dart';
@@ -36,9 +33,6 @@ class ChessGame extends Game with TapDetector {
       spriteMap[piece] = ChessPieceSprite(piece, appModel.pieceTheme);
     }
     _initSpritePositions();
-    if (appModel.isAIsTurn) {
-      _aiMove();
-    }
   }
 
   @override
@@ -121,35 +115,6 @@ class ChessGame extends Game with TapDetector {
         appModel.requestPromotion();
       }
       _moveCompletion(meta, changeTurn: !meta.promotion);
-    }
-  }
-
-  void _aiMove() async {
-    await Future.delayed(Duration(milliseconds: 500));
-    var args = Map();
-    args['aiPlayer'] = appModel.aiTurn;
-    args['aiDifficulty'] = appModel.aiDifficulty;
-    args['board'] = board;
-    aiOperation = CancelableOperation.fromFuture(
-      compute(calculateAIMove, args),
-    );
-    aiOperation.value.then((move) {
-      if (move == null || appModel.gameOver) {
-        appModel.endGame();
-      } else {
-        validMoves = [];
-        var meta = push(move, board, getMeta: true);
-        _moveCompletion(meta, changeTurn: !meta.promotion);
-        if (meta.promotion) {
-          promote(move.promotionType);
-        }
-      }
-    });
-  }
-
-  void cancelAIMove() {
-    if (aiOperation != null) {
-      aiOperation.cancel();
     }
   }
 
@@ -241,9 +206,6 @@ class ChessGame extends Game with TapDetector {
       appModel.changeTurn();
     }
     selectedPiece = null;
-    if (appModel.isAIsTurn && clearRedo && changeTurn) {
-      _aiMove();
-    }
   }
 
   int _vector2ToTile(Vector2 vector2) {

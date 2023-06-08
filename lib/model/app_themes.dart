@@ -15,9 +15,9 @@ class AppTheme {
     this.lightTile = const Color(0x88F7A6FD),
     this.darkTile = const Color(0xff262626),
     this.moveHint = const Color(0xdd9ec45c),
-    this.latestMove = const Color(0xfffffa04),
-    this.checkHint = const Color(0xfffc0303),
-    this.border = const Color(0xfffc0303),
+    this.latestMove = const Color(0xfff8f7cc),
+    this.checkHint = const Color(0x88ff0000),
+    this.border = const Color(0x88ea06fa),
   });
 }
 

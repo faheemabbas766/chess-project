@@ -22,8 +22,7 @@ class RoundedButton extends StatelessWidget {
         ),
         borderRadius: BorderRadius.all(Radius.circular(15)),
         onPressed: onPressed,
-      ),
-      width: double.infinity,
+      ),      width: double.infinity,
       height: 60,
     );
   }
